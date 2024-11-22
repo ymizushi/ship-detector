@@ -164,5 +164,6 @@ function showImageBitmap(imageBitmap) {
 
   const bm = canvas.getContext('bitmaprenderer');
   bm.transferFromImageBitmap(imageBitmap);
+  console.log(canvas)
   document.body.appendChild(canvas);
 }
