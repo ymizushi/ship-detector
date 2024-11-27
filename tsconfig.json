@@ -22,8 +22,9 @@
     /* types */
     "typeRoots": [
       "./node_modules/@webgpu/types",
-      "./node_modules/tweakpane/dist/type/"
-    ],
+      "./node_modules/tweakpane/dist/type/",
+      "./node_modules/@types"
+    ]
   },
   "include": [
     "src/**/*.ts"

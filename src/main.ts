@@ -2,6 +2,7 @@ import './style.css'
 import init from './test-triangle';
 import { assert } from './utils/util';
 import { Pane } from 'tweakpane';
+import { loadImageBitmap } from 'webgpu-utils';
 
 (async () => {
   if (navigator.gpu === undefined) {
@@ -15,6 +16,22 @@ import { Pane } from 'tweakpane';
     h.innerText = 'No adapter is available for WebGPU.';
     return;
   }
+
+  const video = document.getElementById("capture") as HTMLVideoElement;
+  navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+  }).then(stream => {
+      const track = stream.getVideoTracks()[0];
+      console.log(track)
+      const hoge = new ImageCapture(track)
+      console.log(hoge)
+      video.srcObject = stream;
+      video.play()
+  }).catch(e => {
+    console.log(e)
+  })
+
   const device = await adapter.requestDevice();
 
   const canvas = document.querySelector<HTMLCanvasElement>('#webgpu-canvas');
@@ -22,14 +39,10 @@ import { Pane } from 'tweakpane';
   const observer = new ResizeObserver(() => {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
-
-    // Note: You might want to add logic to resize your render target textures here.
-
   });
   observer.observe(canvas);
   const context = canvas.getContext('webgpu') as GPUCanvasContext;
 
-  // Tweakpane: easily adding tweak control for parameters.
   const PARAMS = {
     level: 0,
     name: 'Test',
@@ -46,21 +59,17 @@ import { Pane } from 'tweakpane';
   pane.addInput(PARAMS, 'active');
 
   const imgBitmap = await loadImageBitmap('https://webgpufundamentals.org/webgpu/resources/images/pexels-chevanon-photography-1108099.jpg');
-
   const imgData = getImageData(imgBitmap);
   const numBins = 256;
   const histogram = computeHistogram(numBins, imgData);
-
   showImageBitmap(imgBitmap);
 
   const numEntries = imgData.width * imgData.height;
   drawHistogram(histogram, numEntries, [0, 1, 2]);
-  drawHistogram(histogram, numEntries, [3]);
   init(context, device);
 })();
 
 
-import { loadImageBitmap } from 'https://webgpufundamentals.org/3rdparty/webgpu-utils-1.x.module.js';
 
 async function main() {
   const imgBitmap = await loadImageBitmap('https://webgpufundamentals.org/webgpu/resources/images/pexels-chevanon-photography-1108099.jpg');
@@ -71,12 +80,8 @@ async function main() {
 
   showImageBitmap(imgBitmap);
 
-  // draw the red, green, and blue channels
   const numEntries = imgData.width * imgData.height;
   drawHistogram(histogram, numEntries, [0, 1, 2]);
-
-  // draw the luminosity channel
-  drawHistogram(histogram, numEntries, [3]);
 }
 
 function computeHistogram(numBins, imgData) {
@@ -110,10 +115,9 @@ function drawHistogram(histogram, numEntries, channels, height = 100) {
   });
   const scale = max.map(max => Math.max(1 / max, 0.2 * numBins / numEntries));
 
-  const canvas = document.createElement('canvas');
+  const canvas = document.querySelector<HTMLCanvasElement>('#histogram-canvas');
   canvas.width = numBins;
   canvas.height = height;
-  document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
   const colors = [
@@ -143,7 +147,7 @@ function srgbLuminance(r, g, b) {
 }
 
 function getImageData(imgBitmap) {
-  const canvas = document.createElement('canvas');
+  const canvas = document.getElementById('image-data-canvas') as HTMLCanvasElement;
 
   // make the canvas the same size as the image
   canvas.width = imgBitmap.width;
@@ -155,15 +159,10 @@ function getImageData(imgBitmap) {
 }
 
 function showImageBitmap(imageBitmap) {
-  const canvas = document.createElement('canvas');
-
-  // we have to see the canvas size because of a firefox bug
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=1850871
+  const canvas = document.getElementById('image-bitmap-canvas') as HTMLCanvasElement;
   canvas.width = imageBitmap.width;
   canvas.height = imageBitmap.height;
 
   const bm = canvas.getContext('bitmaprenderer');
   bm.transferFromImageBitmap(imageBitmap);
-  console.log(canvas)
-  document.body.appendChild(canvas);
 }
