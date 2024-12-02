@@ -24,8 +24,8 @@ import { loadImageBitmap } from 'webgpu-utils';
   }).then(stream => {
       const track = stream.getVideoTracks()[0];
       console.log(track)
-      const hoge = new ImageCapture(track)
-      console.log(hoge)
+      const imageCapture = new ImageCapture(track)
+      console.log(imageCapture)
       video.srcObject = stream;
       video.play()
   }).catch(e => {
