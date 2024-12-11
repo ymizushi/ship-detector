@@ -23,14 +23,21 @@ import { loadImageBitmap } from 'webgpu-utils';
       audio: false,
   }).then(stream => {
       const track = stream.getVideoTracks()[0];
-      console.log(track)
-      const imageCapture = new ImageCapture(track)
-      console.log(imageCapture)
       video.srcObject = stream;
       video.play()
   }).catch(e => {
     console.log(e)
   })
+
+  const captureCanvas = document.getElementById("capture-canvas") as HTMLCanvasElement;
+  const canvasContext = captureCanvas.getContext("2d");
+  canvasContext.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+  function _canvasUpdate() {
+    const data = canvasContext.getImageData(0, 0, captureCanvas.width, captureCanvas.height,)
+    canvasContext.putImageData(data, 0, 0);
+    requestAnimationFrame(_canvasUpdate);
+  };
+  _canvasUpdate();
 
   const device = await adapter.requestDevice();
 
