@@ -1,6 +1,6 @@
 import './style.css'
-import init from './test-triangle';
-import { assert } from './utils/util';
+import init from '../test-triangle';
+import { assert } from '../utils/util';
 import { Pane } from 'tweakpane';
 import { loadImageBitmap } from 'webgpu-utils';
 
