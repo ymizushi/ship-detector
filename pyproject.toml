@@ -1,0 +1,71 @@
+[tool.mypy]
+python_version = "3.11"
+exclude = [
+  ".venv",
+]
+
+[tool.black]
+target-version = ['py311']
+line-length = 120
+
+[tool.isort]
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 18
+exclude =[
+]
+paths = [
+]
+
+[tool.poetry]
+name = "ship-detector"
+version = "0.1.0"
+description = ""
+authors = ["ymizushi <mizushi@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pytest-cov = "^4.0.0"
+coverage = {extras = ["toml"], version = "^7.2.5"}
+pytest-mock = "^3.10.0"
+pytest-freezegun = "^0.4.2"
+
+[tool.poetry.group.dev.dependencies]
+pyproject-flake8 = "^6.0.0.post1"
+black = "^23.3.0"
+isort = "^5.12.0"
+pytest = "^7.3.1"
+mypy = "^1.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+python_files = [
+"tests.py", "test_*.py" , "*_tests.py"
+]
+testpaths = [
+]
+filterwarnings= [
+  "ignore::DeprecationWarning"
+]
+
+[tool.coverage.run]
+source = [
+    "."
+]
+relative_files = true
+
+[tool.coverage.report]
+omit = [
+    "*/python?.?/*",
+    "*/site-packages/*",
+    "*/tests/*"
+]
